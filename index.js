@@ -1,33 +1,56 @@
-document.getElementById("register").addEventListener("click", function () {
-    console.log("Register button clicked");
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("registrationForm");
+    const tableBody = document.getElementById("userTableBody");
 
-    let name = document.getElementById("name").value.trim();
-    let email = document.getElementById("email").value.trim();
-    let password = document.getElementById("password").value.trim();
-    let dob = document.getElementById("dob").value;
-    let termsAccepted = document.getElementById("terms").checked;
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    updateTable();
 
-    console.log("Form Data:", { name, email, password, dob, termsAccepted });
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-    if (!name || !email || !password || !dob || !termsAccepted) {
-        alert("All fields are required, and Terms must be accepted!");
-        return;
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const dob = document.getElementById("dob").value;
+        const termsAccepted = document.getElementById("terms").checked;
+
+        if (!isValidAge(dob)) {
+            alert("Age must be between 18 and 55.");
+            return;
+        }
+
+        const user = { name, email, password: "****", dob, termsAccepted }; // Mask password
+        users.push(user);
+        localStorage.setItem("users", JSON.stringify(users));
+
+        updateTable();
+        form.reset();
+    });
+
+    function updateTable() {
+        tableBody.innerHTML = "";
+        users.forEach((user, index) => {
+            const row = `<tr>
+                <td>${user.name}</td>
+                <td>${user.email}</td>
+                <td>${user.password}</td> 
+                <td>${user.dob}</td>
+                <td>${user.termsAccepted ? "✔" : "❌"}</td> <!-- Better display -->
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
     }
 
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    console.log("Existing Users:", users);
+    function isValidAge(dob) {
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        const dayDiff = today.getDate() - birthDate.getDate();
 
-    if (users.some(user => user.email === email)) {
-        alert("This email is already registered!");
-        return;
+        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+            age--;
+        }
+        return age >= 18 && age <= 55;
     }
-
-    let newUser = { name, email, password, dob, acceptedTerms: termsAccepted };
-    users.push(newUser);
-    localStorage.setItem("users", JSON.stringify(users));
-
-    console.log("New User Added:", newUser);
-    alert("Registration successful!");
-    displayUsers();
-    clearForm();
 });
