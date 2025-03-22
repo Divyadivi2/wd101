@@ -9,7 +9,7 @@ document.getElementById("register").addEventListener("click", function () {
     let dob = document.getElementById("dob").value;
     let termsAccepted = document.getElementById("terms").checked;
 
-    // Validation for empty fields
+    // Validation for empty fields   
     if (!name || !email || !password || !dob || !termsAccepted) {
         alert("All fields are required, and Terms must be accepted!");
         return;
