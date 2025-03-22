@@ -1,56 +1,72 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("registrationForm");
-    const tableBody = document.getElementById("userTableBody");
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("Script loaded successfully!");
 
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    updateTable();
+    document.getElementById("register").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent form from refreshing the page
 
-    form.addEventListener("submit", function (event) {
-        event.preventDefault();
+        console.log("Register button clicked");
 
-        const name = document.getElementById("name").value;
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-        const dob = document.getElementById("dob").value;
-        const termsAccepted = document.getElementById("terms").checked;
+        let name = document.getElementById("name").value.trim();
+        let email = document.getElementById("email").value.trim();
+        let password = document.getElementById("password").value.trim();
+        let dob = document.getElementById("dob").value;
+        let termsAccepted = document.getElementById("terms").checked;
 
-        if (!isValidAge(dob)) {
-            alert("Age must be between 18 and 55.");
+        console.log("Form Data:", { name, email, password, dob, termsAccepted });
+
+        // Validate Inputs
+        if (!name || !email || !password || !dob || !termsAccepted) {
+            alert("All fields are required, and you must accept the Terms & Conditions!");
             return;
         }
 
-        const user = { name, email, password: "****", dob, termsAccepted }; // Mask password
-        users.push(user);
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        console.log("Existing Users Before Registration:", users);
+
+        // Check for duplicate email
+        if (users.some(user => user.email === email)) {
+            alert("This email is already registered!");
+            return;
+        }
+
+        // Save New User
+        let newUser = { name, email, password, dob, acceptedTerms: termsAccepted };
+        users.push(newUser);
         localStorage.setItem("users", JSON.stringify(users));
 
-        updateTable();
-        form.reset();
+        console.log("New User Registered:", newUser);
+        alert("Registration successful!");
+
+        displayUsers();
+        clearForm();
     });
 
-    function updateTable() {
+    function displayUsers() {
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        let tableBody = document.getElementById("userTableBody");
         tableBody.innerHTML = "";
-        users.forEach((user, index) => {
-            const row = `<tr>
+
+        users.forEach(user => {
+            let row = `<tr>
                 <td>${user.name}</td>
                 <td>${user.email}</td>
-                <td>${user.password}</td> 
+                <td>****</td>
                 <td>${user.dob}</td>
-                <td>${user.termsAccepted ? "✔" : "❌"}</td> <!-- Better display -->
+                <td>${user.acceptedTerms ? "✔️" : "❌"}</td>
             </tr>`;
             tableBody.innerHTML += row;
         });
+
+        console.log("Users Displayed:", users);
     }
 
-    function isValidAge(dob) {
-        const birthDate = new Date(dob);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        const dayDiff = today.getDate() - birthDate.getDate();
-
-        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-            age--;
-        }
-        return age >= 18 && age <= 55;
+    function clearForm() {
+        document.getElementById("name").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("password").value = "";
+        document.getElementById("dob").value = "";
+        document.getElementById("terms").checked = false;
     }
+
+    displayUsers();
 });
