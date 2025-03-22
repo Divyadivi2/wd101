@@ -1,9 +1,6 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("registrationForm");
-    const tableBody = document.getElementById("userTableBody");
-
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    updateTable();
+    const userTable = document.getElementById("userTable");
 
     form.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -12,45 +9,47 @@ document.addEventListener("DOMContentLoaded", () => {
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
         const dob = document.getElementById("dob").value;
-        const termsAccepted = document.getElementById("terms").checked;
+        const acceptTerms = document.getElementById("acceptTerms").checked;
 
-        if (!isValidAge(dob)) {
-            alert("Age must be between 18 and 55.");
+        if (!acceptTerms) {
+            alert("You must accept the terms and conditions.");
             return;
         }
 
-        const user = { name, email, password: "****", dob, termsAccepted }; // Mask password
-        users.push(user);
+        // Store user data in localStorage
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        users.push({ name, email, password: "****", dob, acceptTerms: "✔" });
         localStorage.setItem("users", JSON.stringify(users));
 
-        updateTable();
+        // Refresh table
+        displayUsers();
+        
+        // Clear form fields
         form.reset();
     });
 
-    function updateTable() {
-        tableBody.innerHTML = "";
-        users.forEach((user, index) => {
-            const row = `<tr>
-                <td>${user.name}</td>
-                <td>${user.email}</td>
-                <td>${user.password}</td> 
-                <td>${user.dob}</td>
-                <td>${user.termsAccepted ? "✔" : "❌"}</td> <!-- Better display -->
-            </tr>`;
-            tableBody.innerHTML += row;
+    function displayUsers() {
+        userTable.innerHTML = `
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Dob</th>
+                <th>Accepted terms?</th>
+            </tr>
+        `;
+
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        users.forEach(user => {
+            let row = userTable.insertRow();
+            row.insertCell(0).textContent = user.name;
+            row.insertCell(1).textContent = user.email;
+            row.insertCell(2).textContent = "****"; // Always hide password
+            row.insertCell(3).textContent = user.dob;
+            row.insertCell(4).textContent = user.acceptTerms;
         });
     }
 
-    function isValidAge(dob) {
-        const birthDate = new Date(dob);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        const dayDiff = today.getDate() - birthDate.getDate();
-
-        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-            age--;
-        }
-        return age >= 18 && age <= 55;
-    }
+    // Load users when the page loads
+    displayUsers();
 });
