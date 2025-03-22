@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("registrationForm");
     const tableBody = document.getElementById("userTableBody");
 
-    // Load stored data on page load
     const users = JSON.parse(localStorage.getItem("users")) || [];
     updateTable();
 
@@ -15,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const dob = document.getElementById("dob").value;
         const termsAccepted = document.getElementById("terms").checked;
 
-        // Validate age (must be 18-55)
         if (!isValidAge(dob)) {
             alert("Age must be between 18 and 55.");
             return;
@@ -37,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td>${user.email}</td>
                 <td>${user.password}</td> 
                 <td>${user.dob}</td>
-                <td>${user.termsAccepted ? "✔" : "❌"}</td>
+                <td>${user.termsAccepted ? "✔" : "❌"}</td> <!-- Better display -->
             </tr>`;
             tableBody.innerHTML += row;
         });
@@ -56,5 +54,3 @@ document.addEventListener("DOMContentLoaded", () => {
         return age >= 18 && age <= 55;
     }
 });
-
-
