@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const user = { name, email, password, dob, termsAccepted };
+        const user = { name, email, password: "****", dob, termsAccepted }; // Mask password
         users.push(user);
         localStorage.setItem("users", JSON.stringify(users));
 
@@ -35,9 +35,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const row = `<tr>
                 <td>${user.name}</td>
                 <td>${user.email}</td>
-                <td>${user.password}</td>
+                <td>${user.password}</td> 
                 <td>${user.dob}</td>
-                <td>${user.termsAccepted}</td>
+                <td>${user.termsAccepted ? "✔" : "❌"}</td>
             </tr>`;
             tableBody.innerHTML += row;
         });
@@ -46,14 +46,15 @@ document.addEventListener("DOMContentLoaded", () => {
     function isValidAge(dob) {
         const birthDate = new Date(dob);
         const today = new Date();
-        const age = today.getFullYear() - birthDate.getFullYear();
+        let age = today.getFullYear() - birthDate.getFullYear();
         const monthDiff = today.getMonth() - birthDate.getMonth();
         const dayDiff = today.getDate() - birthDate.getDate();
 
         if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-            return age - 1 >= 18 && age - 1 <= 55;
+            age--;
         }
         return age >= 18 && age <= 55;
     }
 });
+
 
