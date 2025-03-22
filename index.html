@@ -3,46 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOGIN PAGE</title>
+    <title>Registration Form</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <header>
-        <h1 class="heading">login</h1>
-        <h3 class="title">Sliding Login & Registration Form</h3>
-    </header>
+    <h2>Registration Form</h2>
+    <form id="registrationForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required><br>
 
-    <!-- container div -->
-    <div class="container">
+        <label for="email">Email:</label>
+        <input type="email" id="email" required><br>
 
-        <!-- upper button section to select the login or signup form -->
-        <div class="slider"></div>
-        <div class="btn">
-            <button class="login">Login</button>
-            <button class="signup">Signup</button>
-        </div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" required><br>
 
-        <!-- Form section that contains the login and the signup form -->
-        <div class="form-section">
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" required><br>
 
-            <!-- login form -->
-            <div class="login-box">
-                <input type="email" class="email ele" placeholder="youremail@email.com">
-                <input type="password" class="password ele" placeholder="password">
-                <button class="clkbtn">Login</button>
-            </div>
+        <label>
+            <input type="checkbox" id="terms" required>
+            Accept Terms & Conditions
+        </label><br>
 
-            <!-- signup form -->
-            <div class="signup-box">
-                <input type="text" class="name ele" placeholder="Enter your name">
-                <input type="email" class="email ele" placeholder="youremail@email.com">
-                <input type="password" class="password ele" placeholder="password">
-                <input type="password" class="password ele" placeholder="Confirm password">
-                <button class="clkbtn">Signup</button>
-            </div>
-        </div>
-    </div>
+        <button type="submit">Register</button>
+    </form>
+
+    <h2>Registered Users</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Dob</th>
+                <th>Accepted terms?</th>
+            </tr>
+        </thead>
+        <tbody id="userTableBody">
+            <!-- Data will be inserted here -->
+        </tbody>
+    </table>
+
     <script src="index.js"></script>
 </body>
 </html>
