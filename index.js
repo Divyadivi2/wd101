@@ -1,70 +1,48 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("registrationForm");
-    const tableBody = document.getElementById("userTable");
+    const entriesTable = document.getElementById("entriesTable");
 
-    form.addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevents page reload
+    function getEntries() {
+        let entries = localStorage.getItem("user-entries");
+        return entries ? JSON.parse(entries) : [];
+    }
 
-        const name = document.getElementById("name").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-        const dob = document.getElementById("dob").value;
-        const terms = document.getElementById("terms").checked;
+    function saveEntries(entries) {
+        localStorage.setItem("user-entries", JSON.stringify(entries));
+    }
 
-        // Validate all fields are filled
-        if (!name || !email || !password || !dob) {
-            alert("Please fill in all fields.");
-            return;
-        }
+    function displayEntries() {
+        let entries = getEntries();
+        entriesTable.innerHTML = "";
+        entries.forEach((entry, index) => {
+            let row = `<tr>
+                <td>${entry.name}</td>
+                <td>${entry.email}</td>
+                <td>${entry.password}</td>
+                <td>${entry.dob}</td>
+                <td>${entry.terms ? "true" : "false"}</td>
+            </tr>`;
+            entriesTable.innerHTML += row;
+        });
+    }
 
-        // Validate age (18-55)
-        const dobDate = new Date(dob);
-        const today = new Date();
-        let age = today.getFullYear() - dobDate.getFullYear();
-        const monthDiff = today.getMonth() - dobDate.getMonth();
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
-            age--;
-        }
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
 
-        if (age < 18 || age > 55) {
-            alert("Age must be between 18 and 55 years.");
-            return;
-        }
+        let entry = {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value,
+            dob: document.getElementById("dob").value,
+            terms: document.getElementById("terms").checked
+        };
 
-        // Create new row
-        const newRow = document.createElement("tr");
-        newRow.innerHTML = `
-            <td>${name}</td>
-            <td>${email}</td>
-            <td>${"*".repeat(password.length)}</td> 
-            <td>${dob}</td>
-            <td>${terms ? "true" : "false"}</td>
-        `;
-        tableBody.appendChild(newRow);
-
-        // Store data in localStorage
-        const users = JSON.parse(localStorage.getItem("users")) || [];
-        users.push({ name, email, password, dob, terms });
-        localStorage.setItem("users", JSON.stringify(users));
-
-        // Clear form fields
+        let entries = getEntries();
+        entries.push(entry);
+        saveEntries(entries);
+        displayEntries();
         form.reset();
     });
 
-    // Load stored users from localStorage
-    function loadUsers() {
-        const users = JSON.parse(localStorage.getItem("users")) || [];
-        users.forEach(user => {
-            const newRow = document.createElement("tr");
-            newRow.innerHTML = `
-                <td>${user.name}</td>
-                <td>${user.email}</td>
-                <td>${"*".repeat(user.password.length)}</td> 
-                <td>${user.dob}</td>
-                <td>${user.terms ? "true" : "false"}</td>
-            `;
-            tableBody.appendChild(newRow);
-        });
-    }
-    loadUsers();
+    displayEntries();
 });
