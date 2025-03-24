@@ -1,62 +1,55 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const registerButton = document.getElementById("register");
-    const usersTable = document.getElementById("usersTableBody");
+    const form = document.querySelector("form");
+    const table = document.querySelector("tbody");
 
-    registerButton.addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent form from refreshing the page
+    form.addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent page reload
 
-        let name = document.getElementById("name").value.trim();
-        let email = document.getElementById("email").value.trim();
-        let password = document.getElementById("password").value;
-        let dob = document.getElementById("dob").value;
-        let termsAccepted = document.getElementById("terms").checked;
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const dob = document.getElementById("dob").value;
+        const terms = document.getElementById("terms").checked ? "✓" : "✗";
 
-        console.log("Form Data:", { name, email, password, dob, termsAccepted });
-
-        // Validate input fields
-        if (!name || !email || !password || !dob || !termsAccepted) {
-            alert("All fields are required and Terms & Conditions must be accepted!");
+        if (!name || !email || !password || !dob) {
+            alert("Please fill all fields!");
             return;
         }
 
-        // Retrieve existing users from localStorage
-        let users = JSON.parse(localStorage.getItem("users")) || [];
+        // Append user details to the table
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+            <td>${name}</td>
+            <td>${email}</td>
+            <td>${"*".repeat(password.length)}</td> 
+            <td>${dob}</td>
+            <td>${terms}</td>
+        `;
+        table.appendChild(newRow);
 
-        // Check for duplicate emails
-        if (users.some(user => user.email === email)) {
-            alert("This email is already registered!");
-            return;
-        }
-
-        // Save new user
-        let newUser = { name, email, password, dob, termsAccepted };
-        users.push(newUser);
+        // Store data in localStorage
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        users.push({ name, email, password, dob, terms });
         localStorage.setItem("users", JSON.stringify(users));
 
-        // Update user list on UI
-        displayUsers();
-        alert("Registration successful!");
-        
-        // Clear the form after registration
-        document.getElementById("registrationForm").reset();
+        // Clear form fields
+        form.reset();
     });
 
-    function displayUsers() {
-        usersTable.innerHTML = ""; // Clear existing table data
-        let users = JSON.parse(localStorage.getItem("users")) || [];
-
+    // Load stored users from localStorage
+    function loadUsers() {
+        const users = JSON.parse(localStorage.getItem("users")) || [];
         users.forEach(user => {
-            let row = usersTable.insertRow();
-            row.innerHTML = `
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = `
                 <td>${user.name}</td>
                 <td>${user.email}</td>
-                <td>****</td>  <!-- Hide actual password -->
+                <td>${"*".repeat(user.password.length)}</td> 
                 <td>${user.dob}</td>
-                <td>${user.termsAccepted ? "✔" : "✘"}</td>
+                <td>${user.terms}</td>
             `;
+            table.appendChild(newRow);
         });
     }
-
-    // Display users when the page loads
-    displayUsers();
+    loadUsers();
 });
