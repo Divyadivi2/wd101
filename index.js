@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("registrationForm");
-    const tableBody = document.querySelector("tbody");
+    const tableBody = document.getElementById("userTable");
 
     form.addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent page reload
+        event.preventDefault(); // Prevents page reload
 
         const name = document.getElementById("name").value.trim();
         const email = document.getElementById("email").value.trim();
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Validate all fields are filled
         if (!name || !email || !password || !dob) {
-            alert("Please fill in all the fields.");
+            alert("Please fill in all fields.");
             return;
         }
 
@@ -31,14 +31,14 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Append user details to the table
+        // Create new row
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
             <td>${name}</td>
             <td>${email}</td>
             <td>${"*".repeat(password.length)}</td> 
             <td>${dob}</td>
-            <td>${terms}</td>
+            <td>${terms ? "true" : "false"}</td>
         `;
         tableBody.appendChild(newRow);
 
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${user.email}</td>
                 <td>${"*".repeat(user.password.length)}</td> 
                 <td>${user.dob}</td>
-                <td>${user.terms}</td>
+                <td>${user.terms ? "true" : "false"}</td>
             `;
             tableBody.appendChild(newRow);
         });
