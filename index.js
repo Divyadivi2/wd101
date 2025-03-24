@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector("form");
-    const table = document.querySelector("tbody");
+    const form = document.getElementById("registrationForm");
+    const tableBody = document.querySelector("tbody");
 
     form.addEventListener("submit", function (event) {
         event.preventDefault(); // Prevent page reload
@@ -11,18 +11,17 @@ document.addEventListener("DOMContentLoaded", function () {
         const dob = document.getElementById("dob").value;
         const terms = document.getElementById("terms").checked;
 
-        // Validate that all fields are filled
+        // Validate all fields are filled
         if (!name || !email || !password || !dob) {
             alert("Please fill in all the fields.");
             return;
         }
 
-        // Validate DOB (Age must be between 18 and 55)
+        // Validate age (18-55)
         const dobDate = new Date(dob);
         const today = new Date();
-        const age = today.getFullYear() - dobDate.getFullYear();
+        let age = today.getFullYear() - dobDate.getFullYear();
         const monthDiff = today.getMonth() - dobDate.getMonth();
-
         if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
             age--;
         }
@@ -41,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <td>${dob}</td>
             <td>${terms}</td>
         `;
-        table.appendChild(newRow);
+        tableBody.appendChild(newRow);
 
         // Store data in localStorage
         const users = JSON.parse(localStorage.getItem("users")) || [];
@@ -64,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${user.dob}</td>
                 <td>${user.terms}</td>
             `;
-            table.appendChild(newRow);
+            tableBody.appendChild(newRow);
         });
     }
     loadUsers();
