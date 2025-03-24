@@ -42,6 +42,7 @@ function displayEntries() {
             <td>${entry.dob}</td>
             <td>${entry.terms ? "✔️" : "❌"}</td>
         `;
+        <script src="index.js"></script>
 
         entriesTable.appendChild(row);
     });
